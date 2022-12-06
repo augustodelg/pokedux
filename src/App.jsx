@@ -1,25 +1,26 @@
 
 import Grid from '@mui/material/Grid';
 import { useEffect } from 'react';
-import { Box } from '@mui/material';
+import { Box, CircularProgress, LinearProgress } from '@mui/material';
 import { getPokemon, getPokemonDetails } from './api';
 import pokedux from './assets/pokedux.svg';
 import PokeminList from './components/PokemonList/PokeminList';
 import Searcher from './components/Searcher/Searcher';
-import { useDispatch, useSelector } from 'react-redux';
-import { setPokemons } from './actions';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { getPokemonWithDetails, setLoading, setPokemons } from './actions';
 
 
 function App() {
 
-  const pokemons = useSelector(state => state.pokemons);
+  const pokemons = useSelector(state => state.getIn(["data", "pokemons"], shallowEqual)).toJS();
+  const loading = useSelector(state => state.getIn(["data", "loading"]));
   const dispatch = useDispatch();
 
   async function fetchPokemons() {
+    dispatch(setLoading(true));
     const pokemonsResponse = await getPokemon();
-    const pokemonsDetails = await Promise.all(
-      pokemonsResponse.map((pokemon) => getPokemonDetails(pokemon)));
-    dispatch(setPokemons(pokemonsDetails));
+    dispatch(getPokemonWithDetails(pokemonsResponse));
+    dispatch(setLoading(false));
   }
 
   useEffect(() => {
@@ -36,7 +37,8 @@ function App() {
       <Box sx={{ my: 3 }}>
         <Searcher />
       </Box>
-      <PokeminList pokemons={pokemons} />
+      {loading ? (<LinearProgress />) :
+        (<PokeminList pokemons={pokemons} />)}
     </Grid>
 
 

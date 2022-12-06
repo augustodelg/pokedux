@@ -1,16 +1,18 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App'
-import { Provider } from 'react-redux'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { Provider } from 'react-redux';
 import { applyMiddleware, compose, legacy_createStore as createStore } from 'redux';
-import { pokemonsReducer } from './reducers/pokemons';
-import { featuring, logger } from './middlewares';
+import thunk from 'redux-thunk';
+import App from './App';
+import { logger } from './middlewares';
+import rootReducer from './reducers/root';
 
-const composedEnchanters = compose(
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
-  applyMiddleware(logger)
+const composeAlternative = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
+const composedEnchanters = composeAlternative(
+  applyMiddleware(thunk, logger)
 );
-const store = createStore(pokemonsReducer,composedEnchanters);
+const store = createStore(rootReducer, composedEnchanters);
 
 
 
