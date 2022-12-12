@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { pokemonsApiDetailedAdapter } from './adapter/PokemonAdapter';
 
 export const getPokemon = () => {
   return axios
@@ -10,6 +11,6 @@ export const getPokemon = () => {
 export const getPokemonDetails = (pokemon) => {
   return axios
     .get(pokemon.url)
-    .then((res) => res.data)
+    .then((res) => pokemonsApiDetailedAdapter(res.data))
     .catch((err) => console.log(err));
 };

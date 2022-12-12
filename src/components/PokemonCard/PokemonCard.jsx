@@ -1,33 +1,38 @@
-import { Card, CardContent, CardHeader, CardMedia, Chip, Typography } from "@mui/material";
+import { alpha, Card, CardContent, CardHeader, CardMedia, Chip, Typography } from "@mui/material";
 import { useDispatch } from "react-redux";
-import { setFavorite } from "../../actions";
+import { colorsTypes } from "../../constants";
+import { setFavorite } from "../../slices/dataSlice";
 
 import FavoriteButtom from "./components/FavoriteButtom";
+import TypesInformation from "./components/TypesInformation";
 
 const PokemonCard = ({ pokemon }) => {
 
     const dispatch = useDispatch();
 
     const handleFavorite = () => {
-        dispatch(setFavorite(pokemon.id));
+        dispatch(setFavorite({ pokemonId: pokemon.id }));
     }
     return (
-        <Card >
+        <Card sx={{
+            borderRadius: 4,
+            backgroundColor: alpha(colorsTypes[pokemon.types[0].type.name], 0.2)
+        }} >
+
             <CardHeader action={
-                <FavoriteButtom  isFavorite={pokemon.isFavorite} onClick={handleFavorite}/>}
+                <FavoriteButtom isFavorite={pokemon.isFavorite} onClick={handleFavorite} />}
             />
             <CardMedia
                 component="img"
                 height="auto"
-                image={pokemon.sprites.other.home.front_default}
-                alt="pockemon"
+                image={pokemon.image}
+                alt="pokemon"
             />
             <CardContent>
-                <Typography gutterBottom variant="h5" sx={{ textTransform: 'capitalize', fontWeight: 'bold' }}>
+                <Typography gutterBottom variant="h5" sx={{ textTransform: 'capitalize', fontWeight: 'bold', }}>
                     {pokemon.name}
                 </Typography>
-                {pokemon.types.map((type) => (
-                    <Chip sx={{ mr: 1 }} label={type.type.name} />))}
+                <TypesInformation types={pokemon.types} />
             </CardContent>
         </Card>
     )
